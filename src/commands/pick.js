@@ -1,10 +1,13 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getRandomInt } = require('../helpers/getRandomNumber');
 const { primaryColor } = require('../helpers/settings');
+const { logMessages } = require('../helpers/logMessages');
+
+const commandName = 'pick';
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('pick')
+    .setName(commandName)
     .addStringOption((option) => option
       .setName('options')
       .setDescription('As opções para sortear'))
@@ -12,16 +15,10 @@ module.exports = {
   async execute(interaction) {
     const options = interaction.options.getString('options');
     const parsedOptions = options.split(' ');
-    const randomIndex = getRandomInt(0, parsedOptions.length - 1);
+    const randomIndex = getRandomInt(parsedOptions.length - 1);
 
     // Log message
-    const logChannel = interaction.guild.channels.cache.find((channel) => channel.name === 'logs');
-    logChannel.send(`**/pick** usado pelo usuário <@${interaction.user.id}>`);
-
-    // Assign active user role
-    const member = interaction.guild.members.cache.get(interaction.user.id);
-    const newRole = interaction.guild.roles.cache.find((role) => role.name === 'Active user');
-    await member.roles.add(newRole);
+    logMessages(interaction, commandName);
 
     // Create embed message
     const embed = new EmbedBuilder();

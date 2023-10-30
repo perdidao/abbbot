@@ -1,11 +1,17 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
+// Helpers
 const { primaryColor } = require('../helpers/settings');
+const { logMessages } = require('../helpers/logMessages');
+
+// Services
 const { getGamersClubInfo } = require('../services/getGamersClubInfo');
+
+const commandName = 'gc';
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('gc')
+    .setName(commandName)
     .addStringOption((option) => option
       .setName('discordid')
       .setDescription('O discord id da conta à ser atualizada'))
@@ -13,6 +19,7 @@ module.exports = {
   async execute(interaction) {
     // Log message
     const logChannel = interaction.guild.channels.cache.find((channel) => channel.name === 'logs');
+    logMessages(interaction, commandName);
 
     const discordId = interaction.options.getString('discordid');
     const gamersClubInfo = await getGamersClubInfo(discordId);
@@ -22,12 +29,24 @@ module.exports = {
       interaction.reply({ content: 'Não encontramos esse usuário :(', ephemeral: true });
     }
 
-    logChannel.send(`**/gc** usado por <@${interaction.user.id}> para atualizar <@${discordId}>`);
-
-    // Assign active user role
+    // Assign user roles
     const member = interaction.guild.members.cache.get(interaction.user.id);
-    const newRole = interaction.guild.roles.cache.find((role) => role.name === 'Active user');
-    await member.roles.add(newRole);
+
+    // Level role
+    const levelRole = interaction.guild.roles.cache.find((role) => role.name === `Level ${gamersClubInfo.level}`);
+    await member.roles.add(levelRole);
+
+    // Subscriber role
+    if (gamersClubInfo.subscription.toLowerCase() === 'premium' || gamersClubInfo.subscription.toLowerCase() === 'plus') {
+      const subsRole = interaction.guild.roles.cache.find((role) => role.name === `Assinante ${gamersClubInfo.subscription.charAt(0).toUpperCase()}${gamersClubInfo.subscription.slice(1).toLowerCase()}`);
+      await member.roles.add(subsRole);
+    }
+
+    // Staff role
+    if (gamersClubInfo.staff) {
+      const staffRole = interaction.guild.roles.cache.find((role) => role.name === 'Staff GC');
+      await member.roles.add(staffRole);
+    }
 
     // Create embed message
     const embed = new EmbedBuilder();
