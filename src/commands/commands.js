@@ -9,7 +9,7 @@ const commandName = 'commands';
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(commandName)
-    .setDescription('Show all Abbbot`s commands'),
+    .setDescription('Responde com todos os comandos disponíveis'),
   async execute(interaction) {
     const currentChannel = interaction.channel.name;
 

@@ -11,14 +11,11 @@ module.exports = {
     .addStringOption((option) => option
       .setName('options')
       .setDescription('As opções para sortear'))
-    .setDescription('Replies with one random option'),
+    .setDescription('Sorteia uma das opções informadas'),
   async execute(interaction) {
     const options = interaction.options.getString('options');
     const parsedOptions = options.split(' ');
     const randomIndex = getRandomInt(parsedOptions.length - 1);
-
-    // Log message
-    logMessages(interaction, commandName);
 
     // Create embed message
     const embed = new EmbedBuilder();
@@ -32,5 +29,7 @@ module.exports = {
 
     // Reply with the result
     await interaction.reply({ embeds: [embed] });
+
+    logMessages(interaction, commandName);
   },
 };
