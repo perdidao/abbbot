@@ -1,7 +1,7 @@
 const Axios = require('axios');
 
 const gcApi = Axios.create({
-  baseURL: 'https://api.gamersclub.com.br/v1/user/discord/',
+  baseURL: process.env.GAMERSCLUB_API_URL,
   timeout: 4000,
 });
 
