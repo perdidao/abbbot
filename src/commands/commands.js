@@ -20,9 +20,9 @@ module.exports = {
 
     let result = '';
     result += '**Comandos** \n';
-    result += '`/commands`: Mostra a lista de comandos atual \n';
+    result += '`/info`: Atualiza as informações do usuário com o Discord ID informado \n';
+    result += '`/me`: Busca as informações do usuário que enviar o comando \n';
     result += '`/pick`: Seleciona uma entre as opções inseridas \n';
-    result += '`/gc`: Atualiza o usuário com o Discord ID informado \n';
     await interaction.reply(result);
 
     logMessages(interaction, commandName);

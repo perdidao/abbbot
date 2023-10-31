@@ -8,7 +8,7 @@ const { logMessages } = require('../helpers/logMessages');
 const { errorReply } = require('../helpers/errorReply');
 const { getGamersClubUserInfo } = require('../helpers/getGamersClubUserInfo');
 
-const commandName = 'gc';
+const commandName = 'info';
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -31,11 +31,12 @@ module.exports = {
     const embed = new EmbedBuilder();
     embed
       .setColor(primaryColor)
-      .setTitle('Usuário atualizado')
+      .setTitle(userData.nick)
+      .setURL(`https://gamersclub.com.br/jogador/${userData.id}`)
       .setThumbnail(userData.avatar)
       .addFields(
+        { name: 'ID', value: userData.id.toString(), inline: true },
         { name: 'Nome', value: userData.name, inline: true },
-        { name: 'Nick', value: userData.nick, inline: true },
         { name: 'Assinatura', value: userData.subscription, inline: true },
         { name: 'Level', value: `${userData.level}`, inline: true },
         { name: 'País', value: userData.country, inline: true },
