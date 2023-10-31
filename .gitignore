@@ -3,5 +3,7 @@ node_modules/
 
 # Files
 .env
+.env.gc
+.env.dev
 package-lock.json
 deploy.sh

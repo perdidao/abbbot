@@ -1,19 +1,19 @@
-// Helpers
-const { errorReply } = require('./errorReply');
-
 // Services
 const { getGamersClubInfo } = require('../services/getGamersClubInfo');
 
 async function getGamersClubUserInfo(interaction, discordId) {
-  const gamersClubInfo = await getGamersClubInfo(discordId);
+  // Assign user roles ===================================================
+  const member = interaction.guild.members.cache.get(discordId);
 
-  if (!gamersClubInfo) {
-    errorReply(interaction, 'Usuário não encontrado :(');
+  if (!member) {
     return null;
   }
 
-  // Assign user roles ===================================================
-  const member = interaction.guild.members.cache.get(discordId);
+  const gamersClubInfo = await getGamersClubInfo(discordId);
+
+  if (!gamersClubInfo) {
+    return null;
+  }
 
   // Level role
   const levelRole = interaction.guild.roles.cache.find((role) => role.name === `Level ${gamersClubInfo.level}`);

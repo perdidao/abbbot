@@ -27,6 +27,11 @@ module.exports = {
 
     const userData = await getGamersClubUserInfo(interaction, discordId);
 
+    if (!userData) {
+      errorReply(interaction, 'Usuário não encontrado :(');
+      return;
+    }
+
     // Create embed message
     const embed = new EmbedBuilder();
     embed
