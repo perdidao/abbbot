@@ -6,13 +6,18 @@ const gcApi = Axios.create({
 });
 
 async function getGamersClubInfo(discordId) {
-  const data = await gcApi.get(discordId);
+  try {
+    const data = await gcApi.get(discordId);
 
-  if (!data) {
+    if (!data) {
+      return null;
+    }
+
+    return data.data;
+  } catch (err) {
+    console.log(err);
     return null;
   }
-
-  return data.data;
 }
 
 module.exports = {

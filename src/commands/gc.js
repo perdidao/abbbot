@@ -1,11 +1,12 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
-// Helpers
+// Settings
 const { primaryColor } = require('../helpers/settings');
-const { logMessages } = require('../helpers/logMessages');
 
-// Services
-const { getGamersClubInfo } = require('../services/getGamersClubInfo');
+// Helpers
+const { logMessages } = require('../helpers/logMessages');
+const { errorReply } = require('../helpers/errorReply');
+const { getGamersClubUserInfo } = require('../helpers/getGamersClubUserInfo');
 
 const commandName = 'gc';
 
@@ -17,52 +18,32 @@ module.exports = {
       .setDescription('O discord id da conta à ser atualizada'))
     .setDescription('Atualiza os cargos do usuário citado'),
   async execute(interaction) {
-    // Log message
-    const logChannel = interaction.guild.channels.cache.find((channel) => channel.name === 'logs');
-    logMessages(interaction, commandName);
-
+    const currentChannel = interaction.channel.name;
+    if (currentChannel !== 'comandos') {
+      errorReply(interaction, 'This command is only available on the #comandos channel!');
+      return;
+    }
     const discordId = interaction.options.getString('discordid');
-    const gamersClubInfo = await getGamersClubInfo(discordId);
 
-    if (!gamersClubInfo) {
-      logChannel.send(`**/gc** usado por <@${interaction.user.id}> para atualizar <@${discordId}>`);
-      interaction.reply({ content: 'Não encontramos esse usuário :(', ephemeral: true });
-    }
-
-    // Assign user roles
-    const member = interaction.guild.members.cache.get(interaction.user.id);
-
-    // Level role
-    const levelRole = interaction.guild.roles.cache.find((role) => role.name === `Level ${gamersClubInfo.level}`);
-    await member.roles.add(levelRole);
-
-    // Subscriber role
-    if (gamersClubInfo.subscription.toLowerCase() === 'premium' || gamersClubInfo.subscription.toLowerCase() === 'plus') {
-      const subsRole = interaction.guild.roles.cache.find((role) => role.name === `Assinante ${gamersClubInfo.subscription.charAt(0).toUpperCase()}${gamersClubInfo.subscription.slice(1).toLowerCase()}`);
-      await member.roles.add(subsRole);
-    }
-
-    // Staff role
-    if (gamersClubInfo.staff) {
-      const staffRole = interaction.guild.roles.cache.find((role) => role.name === 'Staff GC');
-      await member.roles.add(staffRole);
-    }
+    const userData = await getGamersClubUserInfo(interaction, discordId);
 
     // Create embed message
     const embed = new EmbedBuilder();
     embed
       .setColor(primaryColor)
       .setTitle('Usuário atualizado')
-      .setThumbnail(gamersClubInfo.avatar)
+      .setThumbnail(userData.avatar)
       .addFields(
-        { name: 'Nome', value: gamersClubInfo.name, inline: true },
-        { name: 'Nick', value: gamersClubInfo.nick, inline: true },
-        { name: 'Assinatura', value: gamersClubInfo.subscription, inline: true },
-        { name: 'Level', value: `${gamersClubInfo.level}`, inline: true },
-        { name: 'País', value: gamersClubInfo.country, inline: true },
+        { name: 'Nome', value: userData.name, inline: true },
+        { name: 'Nick', value: userData.nick, inline: true },
+        { name: 'Assinatura', value: userData.subscription, inline: true },
+        { name: 'Level', value: `${userData.level}`, inline: true },
+        { name: 'País', value: userData.country, inline: true },
       );
 
     // Reply with the result
     await interaction.reply({ embeds: [embed] });
+
+    logMessages(interaction, commandName);
   },
 };
