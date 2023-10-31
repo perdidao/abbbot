@@ -5,6 +5,7 @@ const { updateCommands } = require('./helpers/commandsUpdater');
 const { getGamersClubUserInfo } = require('./helpers/getGamersClubUserInfo');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
+const latestUsers = [];
 
 // Ready
 client.on(Events.ClientReady, () => {
@@ -15,8 +16,14 @@ client.on(Events.ClientReady, () => {
 });
 
 client.on(Events.MessageCreate, (interaction) => {
-  if (interaction.author.id !== client.user.id) {
-    getGamersClubUserInfo(interaction, interaction.author.id);
+  const currentUser = interaction.author.id;
+  const shouldUpdate = !latestUsers.includes(currentUser);
+  if (currentUser !== client.user.id && shouldUpdate) {
+    if (latestUsers.length > 100) {
+      latestUsers.splice(0, 1);
+    }
+    latestUsers.push(currentUser);
+    getGamersClubUserInfo(interaction, currentUser);
   }
 });
 
