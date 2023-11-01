@@ -1,8 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 
 // Helpers
-const { logMessages } = require('../helpers/logMessages');
-const { errorReply } = require('../helpers/errorReply');
+const { errorFeedback, commandLog } = require('../helpers/feedbacks');
 
 const commandName = 'commands';
 
@@ -14,7 +13,7 @@ module.exports = {
     const currentChannel = interaction.channel.name;
 
     if (currentChannel !== 'comandos') {
-      errorReply(interaction, 'This command is only available on the #comandos channel!');
+      errorFeedback(interaction, 'This command is only available on the #comandos channel!');
       return;
     }
 
@@ -25,6 +24,6 @@ module.exports = {
     result += '`/pick`: Seleciona uma entre as opções inseridas \n';
     await interaction.reply(result);
 
-    logMessages(interaction, commandName);
+    commandLog(interaction, 'Usuário solicitou a lista de comandos.');
   },
 };

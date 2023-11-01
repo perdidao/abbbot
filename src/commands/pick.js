@@ -1,7 +1,11 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { getRandomInt } = require('../helpers/getRandomNumber');
+
+// Settings
 const { primaryColor } = require('../helpers/settings');
-const { logMessages } = require('../helpers/logMessages');
+
+// Helpers
+const { getRandomInt } = require('../helpers/getRandomInt');
+const { commandLog } = require('../helpers/feedbacks');
 
 const commandName = 'pick';
 
@@ -30,6 +34,6 @@ module.exports = {
     // Reply with the result
     await interaction.reply({ embeds: [embed] });
 
-    logMessages(interaction, commandName);
+    commandLog(interaction, 'Usuário usou o comando de escolha.');
   },
 };

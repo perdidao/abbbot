@@ -4,7 +4,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { primaryColor } = require('../helpers/settings');
 
 // Helpers
-const { logMessages } = require('../helpers/logMessages');
+const { commandLog } = require('../helpers/feedbacks');
 const { getGamersClubUserInfo } = require('../helpers/getGamersClubUserInfo');
 
 const commandName = 'me';
@@ -36,6 +36,6 @@ module.exports = {
     // Reply with the result
     await interaction.reply({ embeds: [embed] });
 
-    logMessages(interaction, commandName);
+    commandLog(interaction, 'Usuário solicitou dados sobre si mesmo.');
   },
 };
